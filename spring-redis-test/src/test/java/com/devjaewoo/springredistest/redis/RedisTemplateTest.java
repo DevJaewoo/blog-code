@@ -4,12 +4,11 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.redis.core.ListOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.SetOperations;
-import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.data.redis.core.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -66,5 +65,27 @@ public class RedisTemplateTest {
 
         //then
         Assertions.assertThat(result).containsOnly("h", "e", "l", "o");
+    }
+
+    @Test
+    public void opsForHash() {
+        //given
+        HashOperations<String, Object, Object> hashOperations = redisTemplate.opsForHash();
+        String key = "hashKey";
+
+        Map<String, String> map = new HashMap<>();
+        map.put("key1", "value1");
+        map.put("key2", "value2");
+        map.put("key3", "value3");
+
+        hashOperations.putAll(key, map);
+
+        //when
+        Map<Object, Object> resultMap = hashOperations.entries(key);
+        String resultValue = (String) hashOperations.get(key, "key1");
+
+        //then
+        Assertions.assertThat(resultMap).containsAllEntriesOf(map);
+        Assertions.assertThat(resultValue).isEqualTo("value1");
     }
 }
