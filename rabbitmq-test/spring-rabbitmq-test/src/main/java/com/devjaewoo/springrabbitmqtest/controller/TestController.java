@@ -21,7 +21,7 @@ public class TestController {
     @PostMapping("/rabbit/register")
     public String register(@RequestBody QueueRequest queueRequest) {
         String queueName = queueRequest.getQueue();
-        String routingKey = "kiosk.kitchen.order.*";
+        String routingKey = "com.devjaewoo.order.*";
         log.info("Binding queue " + queueName + " with Routing key " + routingKey);
 
         Binding binding = BindingBuilder.bind(new Queue(queueName)).to(topicExchange).with(routingKey);
@@ -33,7 +33,7 @@ public class TestController {
     @GetMapping("/rabbit/publish/{id}")
     public String publish(@PathVariable Long id) {
         String message = "Ordered ID: " + id;
-        String routingKey = "kiosk.kitchen.order." + id;
+        String routingKey = "com.devjaewoo.order." + id;
 
         log.info("Publish message " + message + " to " + routingKey);
         rabbitTemplate.convertAndSend("com.exchange", routingKey, message);
