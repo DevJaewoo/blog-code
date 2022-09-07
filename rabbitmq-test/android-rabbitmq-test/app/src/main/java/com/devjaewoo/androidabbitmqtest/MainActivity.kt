@@ -16,15 +16,21 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        //네트워크 작업은 Main Thread에서 하면 Exception 터짐
         CoroutineScope(Dispatchers.IO).launch {
             kotlin.runCatching {
                 try {
+                    //랜덤 UUID 생성
                     val queueName = UUID.randomUUID().toString()
 
+                    //RabbitMQ 서버와 연결
                     ConnectionFactory().apply { host = "192.168.25.7" }
                         .newConnection()
                         .createChannel().apply {
+                            //UUID로 Queue 생성
                             queueDeclare(queueName, false, false, true, null)
+
+                            //생성한 Queue에 Callback Listener 등록
                             basicConsume(queueName, true,
                                 { consumerTag, message ->
                                     Log.d(TAG, "DeliverCallback: tag: $consumerTag, message: ${message.body.toString(Charsets.UTF_8)}")
@@ -34,6 +40,7 @@ class MainActivity : AppCompatActivity() {
                                 }
                             )
 
+                            //Spring 서버에 Queue UUID 전송
                             RequestHandler.request(
                                 "/rabbit/register",
                                 JSONObject().apply { put("queue", queueName) },
