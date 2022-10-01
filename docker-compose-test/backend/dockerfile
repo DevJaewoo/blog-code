@@ -1,0 +1,7 @@
+FROM openjdk:17-alpine
+RUN mkdir -p /usr/app/backend
+WORKDIR /usr/app/backend
+COPY ./build/libs/*.jar .
+ENV DATABASE_HOST=localhost
+ENTRYPOINT [ "java", "-jar", "backend-0.0.1-SNAPSHOT.jar", "--DATABASE_HOST=${DATABASE_HOST}" ]
+EXPOSE 8080
