@@ -7,9 +7,9 @@ services:
 
     container_name: frontend
 
-    ports: 
+    ports:
       - 3000:3000
-    
+
     depends_on:
       - backend
 
@@ -19,13 +19,13 @@ services:
       dockerfile: dockerfile
 
     container_name: backend
-    ports: 
+    ports:
       - 80:8080
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/postgres
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
-    
+
     depends_on:
       - database
 
@@ -34,7 +34,5 @@ services:
     environment:
       - POSTGRES_USERNAME=postgres
       - POSTGRES_PASSWORD=postgres
-    volumes: 
+    volumes:
       - ./postgres:/var/lib/postgresql/data:rw
-    ports: 
-      - 5432:5432
